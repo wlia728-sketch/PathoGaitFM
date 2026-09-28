@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, cite the PathoGaitFM manuscript and this repository."
+type: software
+title: "PathoGaitFM: code and trained weights for gait kinetics estimation across neurological and developmental cohorts from flexible kinematic inputs"
+authors:
+  - family-names: Liang
+    given-names: Wenqi
+version: "2026.09.27"
+repository-code: "https://github.com/wlia728-sketch/PathoGaitFM"
+url: "https://github.com/wlia728-sketch/PathoGaitFM/releases/tag/v2026.09.27"
+license: MIT
+abstract: "Model code, inference tools, evaluation scripts and trained weights accompanying the manuscript on PathoGaitFM, a foundation model that estimates vertical ground reaction force and sagittal joint moments from flexible joint-angle inputs."

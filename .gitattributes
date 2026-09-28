@@ -1,0 +1,7 @@
+# Keep file bytes as committed; no end-of-line conversion.
+* -text
+*.png binary
+*.pdf binary
+*.npz binary
+*.pt binary
+*.svg -text

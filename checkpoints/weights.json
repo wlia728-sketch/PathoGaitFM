@@ -1,0 +1,94 @@
+{
+  "status": "GitHub release",
+  "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/tag/v2026.09.27",
+  "doi": null,
+  "files": {
+    "v4_stage1_unified_polarity_fixed": {
+      "bytes": 268408697,
+      "sha256": "137ab2ee8c1fd9987e3ef535f56225067bd9a056b36ee03c23a4508031d8c687",
+      "args_available": true,
+      "asset_name": "v4_stage1_unified_polarity_fixed.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage1_unified_polarity_fixed.pt"
+    },
+    "v4_stage2_final8ch_ALLDATA": {
+      "bytes": 268410295,
+      "sha256": "3cfd719983b857ea24a8b4472f355ba75e27a193cdebe999422ee6841f6a8beb",
+      "args_available": true,
+      "asset_name": "v4_stage2_final8ch_ALLDATA.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_final8ch_ALLDATA.pt"
+    },
+    "v4_stage2_expA_dynpool_cv5_0": {
+      "bytes": 268410295,
+      "sha256": "f1ccd3ca9f53c71920be60445118a7367dc7d478bb4568e809548a4130191d8d",
+      "args_available": true,
+      "asset_name": "v4_stage2_expA_dynpool_cv5_0.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_expA_dynpool_cv5_0.pt"
+    },
+    "v4_stage2_expA_dynpool_cv5_1": {
+      "bytes": 268410295,
+      "sha256": "b0f8a2a3a763c0271fed7b1cb6d2727864f5d9c58776ad1632dcd10290f3b313",
+      "args_available": true,
+      "asset_name": "v4_stage2_expA_dynpool_cv5_1.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_expA_dynpool_cv5_1.pt"
+    },
+    "v4_stage2_expA_dynpool_cv5_2": {
+      "bytes": 268410295,
+      "sha256": "292a29fb21256f0560d1866d912d0cbef8d1c868259c93bcb8f4308921a43522",
+      "args_available": true,
+      "asset_name": "v4_stage2_expA_dynpool_cv5_2.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_expA_dynpool_cv5_2.pt"
+    },
+    "v4_stage2_expA_dynpool_cv5_3": {
+      "bytes": 268410295,
+      "sha256": "082274a2953a6df382b2b284ac8bfb3b7a82faa22ad8e0b201133874e51c4d6b",
+      "args_available": true,
+      "asset_name": "v4_stage2_expA_dynpool_cv5_3.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_expA_dynpool_cv5_3.pt"
+    },
+    "v4_stage2_expA_dynpool_cv5_4": {
+      "bytes": 268410295,
+      "sha256": "40747fc398b7944859c4380e1616be9561774d0e0097cce4a91477ebc71e8c10",
+      "args_available": true,
+      "asset_name": "v4_stage2_expA_dynpool_cv5_4.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_expA_dynpool_cv5_4.pt"
+    },
+    "v4_stage2_final8ch_scratch_cv5_0": {
+      "bytes": 268410295,
+      "sha256": "99f64a3de484d82cba9813a8e75a862d44ed8d59f274c6e7e9c68e2c8bef2072",
+      "args_available": true,
+      "asset_name": "v4_stage2_final8ch_scratch_cv5_0.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_final8ch_scratch_cv5_0.pt"
+    },
+    "v4_stage2_final8ch_scratch_cv5_1": {
+      "bytes": 268410295,
+      "sha256": "3ab212ca3d7bbe6c3999a27ce89f73d6834a38cf522b47f0b53041f555750679",
+      "args_available": true,
+      "asset_name": "v4_stage2_final8ch_scratch_cv5_1.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_final8ch_scratch_cv5_1.pt"
+    },
+    "v4_stage2_final8ch_scratch_cv5_2": {
+      "bytes": 268410295,
+      "sha256": "238799418d65a6f53685320cb33a9c91f2ee3cb15f90a8c9df73877d37347258",
+      "args_available": true,
+      "asset_name": "v4_stage2_final8ch_scratch_cv5_2.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_final8ch_scratch_cv5_2.pt"
+    },
+    "v4_stage2_final8ch_scratch_cv5_3": {
+      "bytes": 268410295,
+      "sha256": "60545bc7d8b2405fa6b858e0b341ede6f164cd495ebf9a5f372eb267ac96d410",
+      "args_available": true,
+      "asset_name": "v4_stage2_final8ch_scratch_cv5_3.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_final8ch_scratch_cv5_3.pt"
+    },
+    "v4_stage2_final8ch_scratch_cv5_4": {
+      "bytes": 268410295,
+      "sha256": "3371aa7d300f5823613e5a5fa0dea568b1f3030be5101e2fdff02f26547e3564",
+      "args_available": true,
+      "asset_name": "v4_stage2_final8ch_scratch_cv5_4.pt",
+      "download_url": "https://github.com/wlia728-sketch/PathoGaitFM/releases/download/v2026.09.27/v4_stage2_final8ch_scratch_cv5_4.pt"
+    }
+  },
+  "version": "2026.09.27",
+  "repository_url": "https://github.com/wlia728-sketch/PathoGaitFM",
+  "release_tag": "v2026.09.27"
+}

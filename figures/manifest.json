@@ -1,0 +1,41 @@
+{
+  "manuscript": "PathoGaitFM manuscript (current, all revisions accepted)",
+  "description": "Exact five embedded images from the current manuscript with all revisions accepted; exporting is not recomputation.",
+  "figures": [
+    {
+      "figure": 1,
+      "file": "Fig1.png",
+      "sha256": "9c23c5e8cb9c2831765bed381d6eb7272e1af7d127af312d9750168037287983",
+      "width_emu": "5943600",
+      "height_emu": "2368296"
+    },
+    {
+      "figure": 2,
+      "file": "Fig2.png",
+      "sha256": "b54fe454fae78dac52680dfabdc9a7462090d7db7fa05fd09425005c63f162c3",
+      "width_emu": "5097408",
+      "height_emu": "6903720"
+    },
+    {
+      "figure": 3,
+      "file": "Fig3.png",
+      "sha256": "7d92306d940441d885a7a004eacec38b15e95604e72a368756c4663b27a96b24",
+      "width_emu": "5416316",
+      "height_emu": "6903720"
+    },
+    {
+      "figure": 4,
+      "file": "Fig4.png",
+      "sha256": "b009825cd6857e7be67307440659af0d77d8c676818cfdf2f9f45a3827a73a43",
+      "width_emu": "5349240",
+      "height_emu": "6318961"
+    },
+    {
+      "figure": 5,
+      "file": "Fig5.png",
+      "sha256": "9f813c7e99c044ef4eda6aa6cc7ee41a6449725954ac94de81f186f963405109",
+      "width_emu": "5943600",
+      "height_emu": "4026408"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+# Core dependencies: upload inference, statistics and numerical figures.
+# Verified locally with Python 3.10.19, NumPy 1.26.4, PyTorch 2.5.1+cu121,
+# SciPy 1.15.3, Matplotlib 3.10.7 and openpyxl 3.1.5 on Windows.
+# Install a PyTorch build appropriate to your hardware before this file.
+# CPU inference is supported; CPU/GPU bitwise equality is not asserted.
+numpy>=1.26,<3
+torch>=2.5,<3
+scipy>=1.10,<2
+matplotlib>=3.7,<4
+openpyxl>=3.1,<4
+
+# Optional raw-source preparation tools, installed only for the relevant pipeline:
+# ezc3d, ahrs, pandas, pyarrow, xlrd, nimblephysics.
+# OpenSim IK/ID requires the source-specific OpenSim environment (tested 4.5.2).
+# Follow data/README.md and each harmoniser's instructions. Raw-source processing
+# is separate from uploading already harmonised angle cycles to the demo.

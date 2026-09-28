@@ -1,0 +1,27 @@
+# Local angle-to-kinetics demo
+
+The demo runs on your computer; no hosted service is provided. Download the ALLDATA checkpoint and verify it as described in [download instructions](../docs/download_weights.md), then from the repository root:
+
+```sh
+python -m pip install -r requirements.txt
+python run_demo.py --checkpoint checkpoints/v4_stage2_final8ch_ALLDATA/final.pt
+```
+
+Open `http://127.0.0.1:8766`. The page follows a simple workflow: input, settings, run, curves and download. Its organisation was informed by the [GaitDynamics demo](https://huggingface.co/spaces/alanttan/GaitDynamics); it uses PathoGaitFM's own input contract, preprocessing and weights.
+
+## Uploads
+
+- CSV only, up to 16 cycles and 2 MB; no pickle uploads.
+- `gait_percent` is 0–99 for each `cycle_id`.
+- Angles are harmonised degrees; see `docs/data_format.md`.
+- Omit whole missing channels or leave them blank. Isolated missing samples are rejected.
+- Seven configurations use the same checkpoint: all available, no pelvis, no hip, no knee, no ankle, hip + knee only, and hip only.
+- Downloads contain the predictions CSV and a JSON run record with checkpoint, statistics and input hashes, conditions, masks and seeds.
+
+The server binds to loopback, rejects cross-origin prediction requests and does not save uploads. It is a local research tool, not a public multi-user service. No browser assets or user data are sent to external services.
+
+## Optional examples
+
+`--examples /path/to/folder` serves a folder holding `examples.json`, `example_td_angles.csv` and `example_cp_angles.csv`. The example recordings used during development are restricted participant data and are not distributed; only explicitly installed CSVs are served, never arbitrary local paths.
+
+The model loads once and requests run sequentially. Sampling uses 50 steps, three seeds and the saved-step aggregation of the manuscript. `run_demo.py` selects CUDA if available; `--device cpu` is also supported.

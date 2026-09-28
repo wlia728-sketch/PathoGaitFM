@@ -1,0 +1,33 @@
+# bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# locally built data never enters the repository (see data/README.md)
+data/cohorts_raw/
+data/cohorts_grffix/
+data/pretraining/
+data/inhouse/
+data/splits/
+data/metadata/
+data/external/*/processed/
+data/external/*/raw/
+data/external/*/_train_*
+data/prepare/bmclab/work/
+data/prepare/bmclab/polarity_fixed/
+data/prepare/bmclab/normalized/
+data/prepare/bmclab/ik/
+data/prepare/bmclab/id/
+data/prepare/bmclab/scaled_models/
+
+# model weights are release assets; only args.json is tracked
+checkpoints/*/*.pt
+
+# local outputs, logs and demo overlays
+outputs/
+*.log
+/demo/local_examples/
+/demo/examples.local/
+/demo/examples.json
+/demo/example_*_angles.csv
+/uploads/

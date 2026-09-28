@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PathoGaitFM</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><a class="brand" href="/">PathoGaitFM</a><span id="model-status" class="status">Loading…</span></header>
+<main>
+  <section class="intro"><h1>Joint angles → moments &amp; vGRF</h1><p>Upload your data or choose an example.</p></section>
+  <section class="workspace">
+    <aside class="controls">
+      <label class="file-zone" for="upload"><strong id="filename">Upload angle CSV</strong><span>Degrees · 100 samples per cycle</span></label>
+      <input type="file" id="upload" accept=".csv,text/csv" class="file-input">
+      <a class="text-link" href="/api/template.csv" download="pathogait_angles_template.csv">CSV template</a>
+      <label class="field">Cohort<select id="cohort"><option value="normal">Healthy / TD</option><option value="cp">Cerebral palsy</option><option value="vdk_stroke">Stroke</option><option value="bmclab_pd">Parkinson’s disease</option></select></label>
+      <label class="field">Input angles<select id="input-set"><option value="full">Pelvis + Hip + Knee + Ankle</option><option value="no_pelvis">Hip + Knee + Ankle</option><option value="no_hip_ang">Pelvis + Knee + Ankle</option><option value="no_knee_ang">Pelvis + Hip + Ankle</option><option value="no_ankle_ang">Pelvis + Hip + Knee</option><option value="ladder_no_ankle_pelvis">Hip + Knee</option><option value="ladder_hip_only">Hip</option></select></label>
+      <details class="contract"><summary>Input format</summary><p>Use the template’s names, anatomical signs and <b>gait_percent 0–99</b>. Up to 16 cycles. Omit unavailable columns or leave a whole channel blank.</p><p>Upload harmonised angles, not raw markers, video or IMU signals. The configuration hides selected angle groups; it never supplies missing measurements.</p><p>Source and severity use unknown-condition tokens. Cohort is a model setting, not a diagnosis. <a href="input_format.html">Preparation guide</a></p></details>
+      <label class="check"><input type="checkbox" id="confirm"><span>My angles follow this format.</span></label>
+      <button id="run" class="primary" disabled>Run</button>
+      <p id="run-status" class="run-status" role="status" aria-live="polite">Upload a CSV to run.</p>
+      <div id="examples-section" class="examples-section" hidden><div class="separator"></div><h2>Examples</h2><div id="example-cards"></div></div>
+    </aside>
+    <section class="result-area" aria-live="polite">
+      <div class="result-heading"><div><p class="eyebrow" id="result-kind"></p><h2 id="result-title">Results</h2><p class="subtle" id="result-description"></p></div><button id="download" class="secondary" disabled>Download CSV</button></div>
+      <div id="empty" class="empty"><p>Select an example or run your data.</p></div>
+      <div id="plots" hidden>
+        <div class="plot-toolbar"><div id="target-picker" class="segmented"><button data-target="Hip_Mom" class="active">Hip</button><button data-target="Knee_Mom">Knee</button><button data-target="Ankle_Mom">Ankle</button><button data-target="GRF_V">vGRF</button></div><label class="side-label">Limb<select id="side"><option value="R">Right</option><option value="L">Left</option></select></label></div>
+        <div class="chart-block"><div class="chart-title"><h3>Input angles</h3><span class="unit">degrees</span></div><div id="input-legend" class="legend"></div><div id="input-chart" class="chart"></div></div>
+        <div class="chart-block output-block"><div class="chart-title"><h3 id="output-title">Hip moment</h3><span class="unit" id="output-unit">N·m/kg</span></div><div id="output-legend" class="legend"></div><div id="output-chart" class="chart"></div><div class="metric-row" id="metrics"></div></div>
+        <details class="contract plot-details"><summary>Plot details</summary><p id="plot-note"></p><p>Input preview shows sagittal components. Scores, when available, describe the displayed mean waveform.</p></details>
+        <div class="result-links"><a id="example-input" class="text-link" hidden>Example CSV</a><button id="download-metadata" class="secondary" hidden>Run JSON</button></div>
+      </div>
+    </section>
+  </section>
+  <footer>Runs locally. Uploaded files are not saved.</footer>
+</main><script src="app.js"></script>
+</body></html>
