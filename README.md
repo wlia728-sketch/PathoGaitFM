@@ -94,4 +94,4 @@ The tests need no data and no weights.
 
 ## Licence and citation
 
-The code is released under the MIT licence (`LICENSE`); third-party components are listed in `THIRD_PARTY_NOTICES.md`. Datasets remain under the terms of their original releases. Cite the manuscript; `CITATION.cff` holds the software citation.
+The code is released under the MIT licence (`LICENSE`) and the trained weights under CC BY 4.0 (attribution by citing the manuscript; research software, not a medical device). Third-party components are listed in `THIRD_PARTY_NOTICES.md`. Datasets remain under the terms of their original releases. Cite the manuscript; `CITATION.cff` holds the software citation.

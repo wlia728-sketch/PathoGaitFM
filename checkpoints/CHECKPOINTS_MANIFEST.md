@@ -9,6 +9,8 @@ python scripts/verify_weights.py
 
 `--root /path/to/checkpoints` checks another directory. Missing files and checksum mismatches return a nonzero status. Machine-readable manifest: `checkpoints/weights.json`.
 
+Licence: the weights are released under CC BY 4.0 (attribution by citing the manuscript; research software, not a medical device), as stated in `LICENSE` and in the release notes; the code itself is MIT-licensed.
+
 | Run (each contains `final.pt`) | Bytes | SHA-256 |
 |---|---:|---|
 | v4_stage1_unified_polarity_fixed | 268408697 | `137ab2ee8c1fd9987e3ef535f56225067bd9a056b36ee03c23a4508031d8c687` |

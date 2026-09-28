@@ -1,6 +1,6 @@
 # Download model weights
 
-The [v2026.09.27 release](https://github.com/wlia728-sketch/PathoGaitFM/releases/tag/v2026.09.27) holds the twelve checkpoints as assets named `<run>.pt`. The code's MIT licence does not cover the weights; see the release notes for their terms.
+The [v2026.09.27 release](https://github.com/wlia728-sketch/PathoGaitFM/releases/tag/v2026.09.27) holds the twelve checkpoints as assets named `<run>.pt`. The code's MIT licence does not cover the weights: they are released under CC BY 4.0 (attribution by citing the manuscript; research software, not a medical device). The same terms are stated in `LICENSE` and in the release notes.
 
 For inference on new inputs and for the local demo, download **v4_stage2_final8ch_ALLDATA.pt** only. Rename it to `final.pt` and place it in the existing `checkpoints/v4_stage2_final8ch_ALLDATA/` directory. Other checkpoints follow the same rule: `checkpoints/<run>/final.pt`. Keep the included `args.json` files.
 

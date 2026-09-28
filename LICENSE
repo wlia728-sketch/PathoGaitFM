@@ -20,14 +20,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Data and model weights are NOT covered by this licence.
+Data and model weights are NOT covered by this licence; their terms are stated below.
 
 Raw participant waveforms are not redistributed in this package. Archived scores and cohort
 aggregates accompany the paper. Dataset releases retain their own terms; see data/README.md
 and data/external/leuven_cp/PROVENANCE.md. Access to restricted data is subject to the
 manuscript's Data availability statement and applicable approvals.
 
-Model checkpoints are excluded from this code archive. Their redistribution licence must be
-specified by the authors before a public weight deposit; this code licence does not grant it.
+Model weights are distributed separately as assets of GitHub release v2026.09.27 under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0,
+https://creativecommons.org/licenses/by/4.0/). They may be used, shared and adapted for any
+purpose, including commercially, provided attribution is given by citing the manuscript. They are
+research software, not a medical device, and are not intended for clinical decision-making.
 
 Third-party code and scientific software are recorded in THIRD_PARTY_NOTICES.md.
