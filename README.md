@@ -4,6 +4,19 @@ Code and trained weights for the manuscript *Foundation model for gait kinetics 
 
 PathoGaitFM estimates vertical ground reaction force (vGRF) and sagittal hip, knee and ankle moments from lower-limb joint angles over a normalised gait cycle. The input is a set of harmonised joint angles in degrees (bilateral hip, knee, ankle and pelvis, 16 channels, 100 samples per cycle); whole channels may be missing. The output is six sagittal moments in N·m/kg and bilateral vGRF in body weight. The model is a 1-D diffusion transformer pretrained on healthy gait and fine-tuned on cerebral palsy, typically developing, post-stroke and Parkinson cohorts; estimation is masked inpainting with 50 DDIM steps and three seeds, as in the manuscript.
 
+## Demo
+
+![PathoGaitFM local demo: estimated joint moments and vertical ground reaction force for the bundled synthetic example](demo/demo.png)
+
+The local demo estimates hip, knee and ankle moments and vertical ground reaction force from a CSV of joint angles and plots them per limb. It ships with a synthetic example (three parametric gait cycles, no participant data), so it can be tried without any recording:
+
+```sh
+python -m pip install -r requirements.txt
+python run_demo.py --checkpoint checkpoints/v4_stage2_final8ch_ALLDATA/final.pt
+```
+
+Open `http://127.0.0.1:8766`, click **Load synthetic example** and **Run**, or upload your own harmonised angle CSV. Inference runs on your computer, about ten seconds per run on a CPU; nothing is uploaded elsewhere. The checkpoint comes from the [v2026.09.27 release](https://github.com/wlia728-sketch/PathoGaitFM/releases/tag/v2026.09.27) (see Model weights below).
+
 ## Installation
 
 ```sh

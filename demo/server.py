@@ -116,6 +116,11 @@ def handler_for(demo):
                 self.send(200, {'examples': demo.examples()}); return
             if path == '/api/template.csv':
                 self.send(200, template_csv(), 'text/csv; charset=utf-8'); return
+            if path == '/api/sample.csv':
+                sample = ROOT / 'demo' / 'examples' / 'synthetic_healthy_angles.csv'
+                if sample.is_file():
+                    self.send(200, sample.read_bytes(), 'text/csv; charset=utf-8'); return
+                self.send(404, {'error': 'The synthetic example is not installed.'}); return
             if path.startswith('/api/examples/') and path.endswith('.csv'):
                 example_id = path.rsplit('/', 1)[-1][:-4]
                 row = next((v for v in demo.examples() if v['id'] == example_id), None)
