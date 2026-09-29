@@ -1,6 +1,32 @@
-# PathoGaitFM
+<h1 align="center">Foundation model for gait kinetics estimation across neurological and developmental cohorts from flexible kinematic inputs</h1>
 
-Code and trained weights for the manuscript *Foundation model for gait kinetics estimation across neurological and developmental cohorts from flexible kinematic inputs*.
+<p align="center">
+Wenqi Liang<sup>1</sup>, Zhi-Qiang Zhang<sup>2</sup>, Xingye Cheng<sup>1</sup>, Xi Gao<sup>1</sup>, Jiping Jin<sup>3</sup>, Shuyun Jiang<sup>4</sup>, Silmara Gusso<sup>1</sup> and Yanxin Zhang<sup>1</sup>
+</p>
+
+<p align="center">
+<sup>1</sup>School of Exercise, Sport and Rehabilitation Sciences, Faculty of Science, University of Auckland, Auckland, New Zealand<br>
+<sup>2</sup>School of Electronic and Electrical Engineering, University of Leeds, Leeds, United Kingdom<br>
+<sup>3</sup>ShanghaiTech University, Shanghai, China<br>
+<sup>4</sup>Yueyang Hospital of Integrated Traditional Chinese and Western Medicine, Shanghai University of Traditional Chinese Medicine, Shanghai, China<br>
+Contact: Wenqi Liang (wenqi.liang@auckland.ac.nz)
+</p>
+
+<p align="center">
+<a href="https://github.com/wlia728-sketch/PathoGaitFM/releases/tag/v2026.09.27">Trained weights</a> &nbsp;|&nbsp;
+<a href="#demo">Demo</a> &nbsp;|&nbsp;
+<a href="#citation">Citation</a>
+</p>
+
+<p align="center">
+<img src="figures/Fig1.png" width="95%" alt="PathoGaitFM estimates vertical ground reaction force and sagittal joint moments from available joint angles">
+</p>
+
+## Abstract
+
+In neurological disorders, gait kinetics can inform clinical assessment and treatment planning. Conventional gait-kinetic measurement remains confined to specialised gait laboratories, and the alternative modelling approaches are limited to a specific population cohort, measurement protocol or input configuration, limiting their clinical utility. PathoGaitFM is a foundation model estimating vertical ground reaction force and joint moments across neurological and developmental cohorts from flexible kinematic inputs. Pretrained on healthy participants, PathoGaitFM reached a mean Pearson correlation of 0.811 in cross-validation across four cohorts of participants with cerebral palsy, typical development, stroke or Parkinson's disease, showing that one shared model tracked kinetic waveforms across heterogeneous cohorts. In five unseen external datasets it reached 0.898 without retraining, showing consistently high accuracy across laboratories and populations. Incomplete inputs lowered correlation by at most 0.041, supporting reuse across joint-angle sets. These findings motivate prospective validation with flexible kinematic inputs in clinical populations.
+
+## Model at a glance
 
 PathoGaitFM estimates vertical ground reaction force (vGRF) and sagittal hip, knee and ankle moments from lower-limb joint angles over a normalised gait cycle. The input is a set of harmonised joint angles in degrees (bilateral hip, knee, ankle and pelvis, 16 channels, 100 samples per cycle); whole channels may be missing. The output is six sagittal moments in N·m/kg and bilateral vGRF in body weight. The model is a 1-D diffusion transformer pretrained on healthy gait and fine-tuned on cerebral palsy, typically developing, post-stroke and Parkinson cohorts; estimation is masked inpainting with 50 DDIM steps and three seeds, as in the manuscript.
 
@@ -92,6 +118,21 @@ python -m unittest discover -s tests -p "test_*.py"
 
 The tests need no data and no weights.
 
-## Licence and citation
+## Licence
 
-The code is released under the MIT licence (`LICENSE`) and the trained weights under CC BY 4.0 (attribution by citing the manuscript; research software, not a medical device). Third-party components are listed in `THIRD_PARTY_NOTICES.md`. Datasets remain under the terms of their original releases. Cite the manuscript; `CITATION.cff` holds the software citation.
+The code is released under the MIT licence (`LICENSE`) and the trained weights under CC BY 4.0 (attribution by citing the manuscript; research software, not a medical device). Third-party components are listed in `THIRD_PARTY_NOTICES.md`. Datasets remain under the terms of their original releases.
+
+## Citation
+
+If you use this code or the trained weights, please cite:
+
+```bibtex
+@misc{liang_pathogaitfm_2026,
+  title  = {Foundation model for gait kinetics estimation across neurological and developmental cohorts from flexible kinematic inputs},
+  author = {Liang, Wenqi and Zhang, Zhi-Qiang and Cheng, Xingye and Gao, Xi and Jin, Jiping and Jiang, Shuyun and Gusso, Silmara and Zhang, Yanxin},
+  year   = {2026},
+  url    = {https://github.com/wlia728-sketch/PathoGaitFM}
+}
+```
+
+`CITATION.cff` holds the same information for GitHub's "Cite this repository" button.

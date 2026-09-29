@@ -1,10 +1,24 @@
 cff-version: 1.2.0
 message: "If you use this software, cite the PathoGaitFM manuscript and this repository."
 type: software
-title: "PathoGaitFM: code and trained weights for gait kinetics estimation across neurological and developmental cohorts from flexible kinematic inputs"
+title: "PathoGaitFM: foundation model for gait kinetics estimation across neurological and developmental cohorts from flexible kinematic inputs"
 authors:
   - family-names: Liang
     given-names: Wenqi
+  - family-names: Zhang
+    given-names: Zhi-Qiang
+  - family-names: Cheng
+    given-names: Xingye
+  - family-names: Gao
+    given-names: Xi
+  - family-names: Jin
+    given-names: Jiping
+  - family-names: Jiang
+    given-names: Shuyun
+  - family-names: Gusso
+    given-names: Silmara
+  - family-names: Zhang
+    given-names: Yanxin
 version: "2026.09.27"
 repository-code: "https://github.com/wlia728-sketch/PathoGaitFM"
 url: "https://github.com/wlia728-sketch/PathoGaitFM/releases/tag/v2026.09.27"
