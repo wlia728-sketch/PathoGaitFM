@@ -32,7 +32,7 @@ PathoGaitFM estimates vertical ground reaction force (vGRF) and sagittal hip, kn
 
 ## Demo
 
-![PathoGaitFM local demo: estimated joint moments and vertical ground reaction force for the bundled synthetic example](demo/demo.png)
+<p align="center"><img src="demo/demo.gif" width="90%" alt="PathoGaitFM local demo: load the synthetic example, run, and view the estimated hip, knee and ankle moments and vertical ground reaction force"></p>
 
 The local demo estimates hip, knee and ankle moments and vertical ground reaction force from a CSV of joint angles and plots them per limb. It ships with a synthetic example (three parametric gait cycles, no participant data), so it can be tried without any recording:
 
