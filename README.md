@@ -1,7 +1,7 @@
 <h1 align="center">Foundation model for gait kinetics estimation across neurological and developmental cohorts from flexible kinematic inputs</h1>
 
 <p align="center">
-Wenqi Liang<sup>1</sup>, Zhi-Qiang Zhang<sup>2</sup>, Xingye Cheng<sup>1</sup>, Xi Gao<sup>1</sup>, Jiping Jin<sup>3</sup>, Shuyun Jiang<sup>4</sup>, Silmara Gusso<sup>1</sup> and Yanxin Zhang<sup>1</sup>
+Wenqi Liang<sup>1</sup>, Zhi-Qiang Zhang<sup>2</sup>, Xingye Cheng<sup>1</sup>, Xi Gao<sup>1</sup>, Jiping Jin<sup>3</sup>, Shuyun Jiang<sup>4</sup>, Silmara Gusso<sup>1</sup> and Yanxin Zhang<sup>1*</sup>
 </p>
 
 <p align="center">
@@ -9,6 +9,7 @@ Wenqi Liang<sup>1</sup>, Zhi-Qiang Zhang<sup>2</sup>, Xingye Cheng<sup>1</sup>, 
 <sup>2</sup>School of Electronic and Electrical Engineering, University of Leeds, Leeds, United Kingdom<br>
 <sup>3</sup>ShanghaiTech University, Shanghai, China<br>
 <sup>4</sup>Yueyang Hospital of Integrated Traditional Chinese and Western Medicine, Shanghai University of Traditional Chinese Medicine, Shanghai, China<br>
+<sup>*</sup>Corresponding author<br>
 Contact: Wenqi Liang (wenqi.liang@auckland.ac.nz)
 </p>
 
