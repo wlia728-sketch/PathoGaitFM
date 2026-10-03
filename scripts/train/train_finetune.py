@@ -62,6 +62,9 @@ from pathogait.data.zstats_provenance import (
     bind_zstats_argument,
     verify_checkpoint_zstats,
 )
+from pathogait.data.pelvis_contract import (
+    REPRESENTATIONS, configured_representation, verify_checkpoint_representation,
+)
 from pathogait.diffusion.ddpm import DDPMScheduler
 from pathogait.models.dit1d import DiT_B_1D, count_params
 from pathogait.models.diffusion import EMA
@@ -248,6 +251,7 @@ def _maybe_build_per_subject_transform(args):
         per_subject_table_paper=args.per_subject_flip_paper,
         per_subject_table_addbio=args.per_subject_flip_addbio,
         ambiguous_policy=args.ambiguous_policy,
+        bmclab_pelvis_representation=args.bmclab_pelvis_representation,
     )
     return tfm
 
@@ -269,6 +273,7 @@ def _build_loaders(args, train_split_name: str, val_split_name: str):
         cache_size=args.cache_size,
         transform_override=transform_override,
         sampling="dynamics_cycle_uniform",
+        bmclab_pelvis_representation=args.bmclab_pelvis_representation,
     )
     val_ds = V4BalancedDatasetV3.from_split(
         args.split, val_split_name,
@@ -278,6 +283,7 @@ def _build_loaders(args, train_split_name: str, val_split_name: str):
         cache_size=max(8, args.cache_size // 2),
         transform_override=transform_override,
         sampling="dynamics_cycle_uniform",
+        bmclab_pelvis_representation=args.bmclab_pelvis_representation,
     )
     loader_kwargs = dict(batch_size=args.batch_size, collate_fn=collate)
     if args.num_workers > 0:
@@ -488,6 +494,9 @@ def _val_epoch(model, ema, sched, loader, device, sev_map,
 # ----------------------------------------------------------------------
 def get_args():
     p = argparse.ArgumentParser()
+    p.add_argument("--bmclab-pelvis-representation", choices=REPRESENTATIONS,
+                   default=configured_representation(),
+                   help="BMClab pelvis convention; must match input metadata and Stage-2 weights.")
     # Data
     p.add_argument("--split", default=str(ROOT / "data" / "splits" / "v4_stage2_split_grffix.json"))
     p.add_argument("--zstats",
@@ -771,6 +780,12 @@ def main():
             sys.exit(2)
         log(f"  loading Stage 1 ckpt: {args.resume}")
         ckpt = torch.load(args.resume, map_location="cpu", weights_only=False)
+        saved_args = ckpt.get("args", {})
+        if isinstance(saved_args, argparse.Namespace):
+            saved_args = vars(saved_args)
+        if "fold" in saved_args:
+            verify_checkpoint_representation(
+                ckpt, args.bmclab_pelvis_representation, "Stage-2 checkpoint")
         zstats_warning = verify_checkpoint_zstats(
             ckpt, zstats_path, args.zstats_sha256, "Stage 1 checkpoint"
         )

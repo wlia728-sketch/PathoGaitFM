@@ -4,6 +4,7 @@ Input angles must already use the harmonised sign and zero conventions.
 This module performs normalisation, not camera/IMU processing or inverse kinematics.
 """
 from pathlib import Path
+from argparse import Namespace
 import json
 import sys
 from numbers import Integral
@@ -20,6 +21,7 @@ from drop_channels import DROP_16CH
 from input_configurations import INPUT_MASKS
 from tsa_inference import tweedie_inpaint_drop, CHECKPOINT_STEPS
 from pathogait.data.channels import KEEP_CHANNELS_54TO40
+from pathogait.data.pelvis_contract import FIELD, LEGACY, validate_representation
 from pathogait.data.zstats_provenance import sha256_file
 from pathogait.diffusion.ddpm import DDPMScheduler
 
@@ -107,6 +109,11 @@ class PathoGait:
             raise FileNotFoundError(f"Checkpoint missing at {self.checkpoint}. See checkpoints/CHECKPOINTS_MANIFEST.md.")
         self.device = torch.device(device)
         self.model, state, self.weights_kind, self.token = load_model(self.checkpoint, self.device)
+        checkpoint_args = state.get("args", {})
+        if isinstance(checkpoint_args, Namespace):
+            checkpoint_args = vars(checkpoint_args)
+        self.bmclab_pelvis_representation = validate_representation(
+            checkpoint_args.get(FIELD, LEGACY))
         del state
         if self.token is None:
             raise ValueError("Use a Stage-2 checkpoint carrying its learned input mask token")
@@ -138,6 +145,12 @@ class PathoGait:
         valid[:, MASKS[input_set]] = False
         if not valid[:, INPUT_CH].any(axis=1).all():
             raise ValueError("input configuration leaves no observed kinematics")
+        if (cohort == "bmclab_pd"
+                and getattr(self, "bmclab_pelvis_representation", LEGACY) == LEGACY
+                and valid[:, 34:40].any()):
+            raise ValueError(
+                "This BMClab checkpoint expects pelvis translations. Omit pelvis angles "
+                "(no_pelvis, NaN or mask), or use a matching angular checkpoint.")
         data = torch.from_numpy(z).to(self.device)
         validity = torch.from_numpy(valid).to(self.device)
         sid, cid, svid = [torch.full((len(z),), i, dtype=torch.long, device=self.device) for i in ids]
@@ -162,5 +175,6 @@ class PathoGait:
                 "ddim_steps": 50, "cfg": 1.0, "saved_step_indices_zero_based": list(CHECKPOINT_STEPS),
                 "aggregation": "cellwise trimmed mean of six x0 snapshots and final state, then mean across seeds",
                 "input_names": INPUT_NAMES, "input_units": "degrees",
+                "bmclab_pelvis_representation": self.bmclab_pelvis_representation,
                 "target_names": [CHANNEL_NAMES[i] for i in TARGET_CH],
                 "target_units": TARGET_UNITS, "prediction": self.last_prediction}

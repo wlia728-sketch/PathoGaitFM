@@ -19,6 +19,11 @@ An optional boolean mask has shape `(B, 16)` or `(16,)`: **True means observed**
 
 The seven configurations use all available angles; omit pelvis, hip, knee or ankle angles; retain hip + knee; or retain hip only. Exact masks are shared by the API and demo in `scripts/lib/input_configurations.py`. Each configuration applies to the channels actually supplied and must leave at least one observed channel. Missing inputs use the checkpoint's learned token, as in the paper evaluation.
 
+For PD uploads with the released checkpoints, omit pelvis angles using the missing-channel mask,
+NaN channels or the `no_pelvis` configuration. Those checkpoints use the BMClab translation
+representation; PD uploads that include pelvis angles require a checkpoint trained with
+`opensim_angles_deg`.
+
 Prediction output order is right hip, left hip, right knee, left knee, right ankle, left ankle moment, right vGRF, left vGRF. Model indices are `[10, 13, 16, 17, 18, 19, 22, 25]`. Units are six **Nm/kg** followed by two **BW** (multiply BW by 100 for %BW). To obtain N or Nm, use the subject's mass and gravity as appropriate; the API does not invent anthropometry.
 
 ## Normalisation

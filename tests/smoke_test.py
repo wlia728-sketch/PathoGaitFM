@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # every subprocess runs without the developer's PYTHONPATH and PATHOGAIT_* overrides
 CLEAN_ENV = {k: v for k, v in os.environ.items() if not k.startswith("PATHOGAIT_") and k != "PYTHONPATH"}
 CLI_ROOTS = (
+    "data/prepare/fit_stage1_zstats.py",
     "model/pathogait/training/train_pretrain.py",
     "scripts/train/train_finetune.py",
     "model_baseline/published_comparators.py",

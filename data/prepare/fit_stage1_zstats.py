@@ -33,7 +33,7 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "model"))
 
 from pathogait.data.transform import (  # noqa: E402
     ANGLE_CHANNELS_54CH,

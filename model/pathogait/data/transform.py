@@ -46,6 +46,7 @@ from .channels import (
     EXCLUDED_STUDIES,
 )
 from .cohort_polarity import COHORT_FLIP_54CH_RAW
+from .pelvis_contract import ANGLES, configured_representation, validate_representation
 from .subject_metadata import V4SubjectMetadata, GRAVITY_MS2
 
 
@@ -134,6 +135,8 @@ class V4LazyTransformV3:
                             Phase 5 stat-fitting itself).
       addbio_flip_override / cohort_flip_override: optional polarity overrides.
       clip_bound: hard clip range, default 1.5.
+      bmclab_pelvis_representation: input coordinate contract; defaults to
+                            PATHOGAIT_BMCLAB_PELVIS_REPRESENTATION.
     """
 
     def __init__(
@@ -144,8 +147,13 @@ class V4LazyTransformV3:
         cohort_flip_override: Optional[Dict[str, List[int]]] = None,
         cohort_offset_override: Optional[Dict[str, Dict[int, float]]] = None,
         clip_bound: float = 1.5,
+        bmclab_pelvis_representation: Optional[str] = None,
     ):
         self.metadata = metadata
+        self.bmclab_pelvis_representation = (
+            configured_representation() if bmclab_pelvis_representation is None
+            else validate_representation(bmclab_pelvis_representation)
+        )
         if global_zstats_path is not None:
             with open(global_zstats_path) as f:
                 self.zstats: Optional[Dict[str, Dict[str, float]]] = json.load(f)
@@ -154,9 +162,17 @@ class V4LazyTransformV3:
         self.addbio_flip = (addbio_flip_override
                             if addbio_flip_override is not None
                             else dict(ADDBIO_FLIP_54CH_V3))
-        self.cohort_flip = (cohort_flip_override
-                            if cohort_flip_override is not None
-                            else dict(COHORT_FLIP_54CH_RAW))
+        self.cohort_flip = {
+            source: list(channels) for source, channels in (
+                cohort_flip_override if cohort_flip_override is not None
+                else COHORT_FLIP_54CH_RAW).items()
+        }
+        if self.bmclab_pelvis_representation == ANGLES:
+            # The translation-Z convention does not apply to OpenSim rotation.
+            self.cohort_flip["bmclab_pd"] = [
+                ch for ch in self.cohort_flip.get("bmclab_pd", [])
+                if ch not in (50, 53)
+            ]
         # Layer C.5 — per-cohort zero-reference offset
         self.cohort_offset: Dict[str, Dict[int, float]] = (
             cohort_offset_override

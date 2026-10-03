@@ -5,6 +5,13 @@ doi:10.6084/m9.figshare.14896881).
 Place the release's `C3Dfiles.zip` and `PDGinfo.xlsx` under `raw/`; intermediate results are written under
 `work/`. Needs `opensim` 4.5, `nimblephysics` (Rajagopal2015 model), `ezc3d`, `pandas`, `pyarrow`, `xlrd`.
 
+Pelvis channels contain OpenSim tilt, list and rotation in degrees, in that order in both
+48–50 and 51–53. Step 6 centres each angle over its gait cycle. A channel is valid only when
+all its samples are finite. The accompanying metadata identifies this representation as
+`opensim_angles_deg`. Training and evaluation must use the same representation as the data
+and checkpoint; the released checkpoints use `legacy_translations_m` and cannot be used
+to reproduce the reported results with these angular BMClab arrays.
+
 | Step | Script | Writes |
 |---|---|---|
 | 3.1 marker rename, c3d to TRC | `s31_batch_c3d_to_trc.py` (`s31_c3d_to_trc.py`, `marker_map.py`) | `work/trc/` |

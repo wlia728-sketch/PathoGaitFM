@@ -56,17 +56,18 @@ Mapping table (after Wenqi's Q2-Q5 decisions):
    45  L Gastrocnemius     ←  (none)              mask=0
    46  L Hamstring         ←  (none)              mask=0
    47  L Rectus            ←  (none)              mask=0
-   48  R_Pelvic_Lab_X      ←  pelvis_tx           (Q5, replicated)       both
-   49  R_Pelvic_Lab_Y      ←  pelvis_ty                                  both
-   50  R_Pelvic_Lab_Z      ←  pelvis_tz                                  both
-   51  L_Pelvic_Lab_X      ←  pelvis_tx (same value as ch 48)            both
-   52  L_Pelvic_Lab_Y      ←  pelvis_ty                                  both
-   53  L_Pelvic_Lab_Z      ←  pelvis_tz                                  both
+   48  R_Pelvic_Lab_X      ←  pelvis_tilt         (deg, replicated)       both
+   49  R_Pelvic_Lab_Y      ←  pelvis_list         (deg)                   both
+   50  R_Pelvic_Lab_Z      ←  pelvis_rotation     (deg)                   both
+   51  L_Pelvic_Lab_X      ←  pelvis_tilt (same value as ch 48)           both
+   52  L_Pelvic_Lab_Y      ←  pelvis_list         (deg)                   both
+   53  L_Pelvic_Lab_Z      ←  pelvis_rotation     (deg)                   both
 
 Mask logic (final mask combines side gating + per-cycle kinetics availability):
 
   - Side gating: if this cycle is R-side, mask all L-side channels (and v/v).
-    Pelvic_Lab (48-53) always on.
+    Pelvic_Lab (48-53) is replicated into both slots; an angle is valid
+    only when every sample in that cycle is finite.
   - Kinetics availability: if cycle's `grf_presence_in_cycle <= 0.5`, mask
     all moment + power + GRF channels (18-39).
   - Kinetics side carve-out: if subject-state is in `_grf_mask.json` as
@@ -77,6 +78,8 @@ Mask logic (final mask combines side gating + per-cycle kinetics availability):
 from __future__ import annotations
 
 import numpy as np
+
+PELVIS_REPRESENTATION = "opensim_angles_deg"
 
 # Indices into BMClab cycle .npy (`s4_cycle_extraction.ALL_CHANNELS`):
 SRC = {
@@ -103,7 +106,7 @@ L_SIDE_CHANNELS_KIN = [3, 4, 5, 9, 10, 11, 15, 16, 17]      # L angles (incl. ma
 R_SIDE_CHANNELS_KINETIC = [18, 19, 20, 24, 26, 28, 30, 32, 34, 35, 36]   # R moment + power + GRF
 L_SIDE_CHANNELS_KINETIC = [21, 22, 23, 25, 27, 29, 31, 33, 37, 38, 39]   # L moment + power + GRF
 EMG_CHANNELS = list(range(40, 48))      # always masked for BMClab
-PELVIC_CHANNELS = list(range(48, 54))    # always available
+PELVIC_CHANNELS = list(range(48, 54))    # validity depends on the source angles
 KINETIC_CHANNELS = list(range(18, 40))   # moments + powers + GRF
 KINEMATIC_CHANNELS = list(range(0, 18))  # angles
 # Channels with NO BMClab source — always masked
@@ -123,8 +126,7 @@ def build_54ch(cycle_data: np.ndarray,
                 cycle_side: str,
                 grf_presence: float,
                 grf_mask_category: str,
-                computed_powers: np.ndarray,
-                pelvis_xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+                computed_powers: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Build (101, 54) data + (54,) mask for one cycle.
 
     Args:
@@ -134,8 +136,9 @@ def build_54ch(cycle_data: np.ndarray,
       grf_mask_category -- subject-state mask category from
                        _grf_mask.json ('pass', 'r_strike_only', etc.).
       computed_powers -- (6, 101) array from s5_joint_power.compute_powers.
-      pelvis_xyz    -- (3, 101) array of pelvis_tx/ty/tz time-normalized to
-                       this cycle.
+
+    Pelvis angles come from the first three rows of cycle_data, already
+    time-normalized by Step 4. Step 6 centers each angle within its cycle.
 
     Returns:
       data54: (101, 54) float32 with NaN for masked positions
@@ -211,15 +214,16 @@ def build_54ch(cycle_data: np.ndarray,
                 data54[:, tgt_ch] = computed_powers[key, :]
             mask54[tgt_ch] = True
 
-    # ── Pelvic_Lab (48-53) — always present, replicated to both R and L slots ────
-    # pelvis_xyz is (3, 101): row 0 = tx, row 1 = ty, row 2 = tz
-    data54[:, 48] = pelvis_xyz[0, :]   # R_Pelvic_Lab_X
-    data54[:, 49] = pelvis_xyz[1, :]   # R_Pelvic_Lab_Y
-    data54[:, 50] = pelvis_xyz[2, :]   # R_Pelvic_Lab_Z
-    data54[:, 51] = pelvis_xyz[0, :]   # L_Pelvic_Lab_X (replicated)
-    data54[:, 52] = pelvis_xyz[1, :]
-    data54[:, 53] = pelvis_xyz[2, :]
-    mask54[48:54] = True
+    # ── Pelvic_Lab (48-53) — angular coordinates in degrees ───────────────
+    # One pelvis, sampled on this limb's cycle and replicated to both slots.
+    # A partially missing angle is unavailable for the whole cycle.
+    for source, slots in (("pelvis_tilt", (48, 51)),
+                          ("pelvis_list", (49, 52)),
+                          ("pelvis_rotation", (50, 53))):
+        angle = cycle_data[SRC[source], :]
+        if np.isfinite(angle).all():
+            data54[:, slots] = angle[:, None]
+            mask54[list(slots)] = True
 
     # ── EMG (40-47): always masked off ──────────────────────────────────
     # (already False; data left as NaN)

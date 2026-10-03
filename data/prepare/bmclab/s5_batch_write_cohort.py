@@ -19,38 +19,14 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from s5_channel_mapping import build_54ch
+from s5_channel_mapping import PELVIS_REPRESENTATION, build_54ch
 from s5_joint_power import compute_powers
-from s4_cycle_extraction import _read_storage   # reuse storage reader
 
 PROJ = Path(__file__).resolve().parents[3]
 META_PARQUET = PROJ / "data/prepare/bmclab/work/cycles/_cycle_metadata.parquet"
 CYCLES_DIR = PROJ / "data/prepare/bmclab/work/cycles"
-IK_DIR = PROJ / "data/prepare/bmclab/work/ik"
 GRF_MASK_JSON = PROJ / "data/prepare/bmclab/work/grf/_grf_mask.json"
 OUT_DIR = PROJ / "data/cohorts_raw/bmclab_pd"
-
-
-def _ik_pelvis_xyz_for_cycle(ik_path: Path, t_start: float, t_end: float) -> np.ndarray:
-    """Read IK .mot, extract pelvis_tx/ty/tz, time-normalize to 101 pts on [t_start, t_end].
-
-    IK times start at 0 (re-based earlier) or near 0 in the original timeline.
-    The cycle metadata's cycle_t_start_s / cycle_t_end_s are in the same
-    re-based timeline used by Step 4 (= IK timeline - IK_t0; IK_t0 ≈ 0 for
-    all trials we saw).
-    """
-    t_ik, cols = _read_storage(ik_path)
-    if t_ik is None:
-        return np.full((3, 101), np.nan, dtype=np.float32)
-    t_ik_re = t_ik - t_ik[0]  # match Step 4's re-basing
-    out = np.zeros((3, 101), dtype=np.float32)
-    grid = np.linspace(t_start, t_end, 101)
-    for k, ch in enumerate(("pelvis_tx", "pelvis_ty", "pelvis_tz")):
-        if ch in cols:
-            out[k, :] = np.interp(grid, t_ik_re, cols[ch], left=np.nan, right=np.nan)
-        else:
-            out[k, :] = np.nan
-    return out
 
 
 def main():
@@ -88,13 +64,11 @@ def main():
                 meta_rows.append({
                     "cycle_idx_in_trial": cyc_idx, "group": "pd", "n_valid_channels": 0,
                     "subject_id": f"bmclab_{sub.lower()}_{med}", "trial": trial, "side": side,
+                    "pelvis_representation": PELVIS_REPRESENTATION,
                     "missing_cycle": True,
                 })
                 continue
             cyc_data = np.load(cyc_npy)   # (34, 101)
-            # IK pelvis
-            ik_path = IK_DIR / f"{trial}_ik.mot"
-            pelvis_xyz = _ik_pelvis_xyz_for_cycle(ik_path, row["cycle_t_start_s"], row["cycle_t_end_s"])
             # Powers
             duration = float(row["cycle_duration_sec"])
             powers = compute_powers(cyc_data, duration)
@@ -104,7 +78,6 @@ def main():
                 grf_presence=float(row["grf_presence_in_cycle"]),
                 grf_mask_category=row["mask_cat"],
                 computed_powers=powers,
-                pelvis_xyz=pelvis_xyz,
             )
             data_arr[i] = d54
             mask_arr[i] = m54
@@ -115,6 +88,7 @@ def main():
                 "subject_id": f"bmclab_{sub.lower()}_{med}",
                 "trial": trial,
                 "side": side,
+                "pelvis_representation": PELVIS_REPRESENTATION,
                 "cycle_duration_sec": duration,
                 "grf_presence": float(row["grf_presence_in_cycle"]),
                 "grf_mask_category": row["mask_cat"],

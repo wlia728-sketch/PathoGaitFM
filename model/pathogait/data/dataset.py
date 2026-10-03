@@ -17,6 +17,9 @@ from torch.utils.data import IterableDataset
 from .channels import EXCLUDED_STUDIES, filter_addbio_files, KEEP_CHANNELS_54TO40
 from .transform import V4LazyTransformV3
 from .subject_metadata import V4SubjectMetadata
+from .pelvis_contract import (
+    REPRESENTATIONS, configured_representation, validate_bmclab_input,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 V4_RAW_ROOT = PROJECT_ROOT / "data"
@@ -114,6 +117,7 @@ class V4BalancedDatasetV3(IterableDataset):
         cache_size: int = 64,
         transform_override: Optional[object] = None,
         sampling: str = "source_uniform",
+        bmclab_pelvis_representation: Optional[str] = None,
     ):
         super().__init__()
         # Which of the two reported sampling regimes to draw under. Stage 1 draws uniformly over its
@@ -136,13 +140,23 @@ class V4BalancedDatasetV3(IterableDataset):
             else:
                 raise ValueError(f"Unknown stage: {stage!r}")
         self.metadata = V4SubjectMetadata()
+        representation = (configured_representation() if bmclab_pelvis_representation is None
+                          else bmclab_pelvis_representation)
+        if representation not in REPRESENTATIONS:
+            raise ValueError(f"Unknown BMClab pelvis representation: {representation!r}")
         if transform_override is not None:
             self.transform = transform_override
         else:
             self.transform = V4LazyTransformV3(
                 metadata=self.metadata,
                 global_zstats_path=global_zstats_path,
+                bmclab_pelvis_representation=representation,
             )
+        self.bmclab_pelvis_representation = getattr(
+            self.transform, "bmclab_pelvis_representation", representation)
+        if (bmclab_pelvis_representation is not None
+                and self.bmclab_pelvis_representation != representation):
+            raise ValueError("Dataset and transform BMClab pelvis representations differ")
 
         requested_sources = set(sources) if sources is not None else None
         all_files = _discover_files()
@@ -186,6 +200,10 @@ class V4BalancedDatasetV3(IterableDataset):
                 raise RuntimeError(
                     f"file_filter removed all files; got {len(file_filter)} entries.")
 
+        self._bmclab_meta_state = {}
+        for path in self.source_files.get("bmclab_pd", []):
+            self._validate_bmclab_metadata(Path(path))
+
         self.source_to_id = {s: i for i, s in enumerate(self.sources)}
         self.pseudo_length = int(pseudo_length)
         self.seed = int(seed)
@@ -216,7 +234,20 @@ class V4BalancedDatasetV3(IterableDataset):
         raise RuntimeError(
             f"np.load({path}) failed after {max_retries} retries; last error: {last_err}")
 
+    def _validate_bmclab_metadata(self, raw_path: Path):
+        meta_path = raw_path.with_name(raw_path.stem + "_meta.csv")
+        try:
+            stat = meta_path.stat()
+            state = (stat.st_mtime_ns, stat.st_size)
+        except FileNotFoundError:
+            state = None
+        if raw_path not in self._bmclab_meta_state or self._bmclab_meta_state[raw_path] != state:
+            validate_bmclab_input(raw_path, self.bmclab_pelvis_representation)
+            self._bmclab_meta_state[raw_path] = state
+
     def _load_transformed(self, npy_path: str, src: str):
+        if src == "bmclab_pd":
+            self._validate_bmclab_metadata(Path(npy_path))
         if npy_path in self._cache:
             return self._cache[npy_path]
         raw = self._safe_np_load(npy_path)

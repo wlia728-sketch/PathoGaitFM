@@ -79,6 +79,7 @@ class V4LazyTransformV3PerSubject(V4LazyTransformV3):
       per_subject_table_addbio: path to per_subject_flip_table_addbio.json
       ambiguous_policy: 'no_flip' (default) or 'flip'. See module docstring.
       clip_bound: hard clip range (default 1.5, passed to base).
+      bmclab_pelvis_representation: coordinate contract (passed to base).
 
     Backward-compat:
       If BOTH per_subject_table_paper and per_subject_table_addbio are None,
@@ -94,6 +95,7 @@ class V4LazyTransformV3PerSubject(V4LazyTransformV3):
         per_subject_table_addbio: Optional[str] = None,
         ambiguous_policy: str = "no_flip",
         clip_bound: float = 1.5,
+        bmclab_pelvis_representation: Optional[str] = None,
     ):
         super().__init__(
             metadata=metadata,
@@ -101,6 +103,7 @@ class V4LazyTransformV3PerSubject(V4LazyTransformV3):
             addbio_flip_override=None,   # keep base global tables as fallback
             cohort_flip_override=None,
             clip_bound=clip_bound,
+            bmclab_pelvis_representation=bmclab_pelvis_representation,
         )
         if ambiguous_policy not in ("no_flip", "flip"):
             raise ValueError(

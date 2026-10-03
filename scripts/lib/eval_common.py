@@ -28,6 +28,9 @@ for _p in [ROOT, ROOT / "model"] + sorted(d for d in (ROOT / "scripts").iterdir(
 from pathogait.data.channels import KEEP_CHANNELS_54TO40
 from pathogait.data.transform_per_subject import V4LazyTransformV3PerSubject
 from pathogait.data.zstats_provenance import sha256_file, verify_checkpoint_zstats
+from pathogait.data.pelvis_contract import (
+    configured_representation, validate_bmclab_input, verify_checkpoint_representation,
+)
 from pathogait.models.dit1d import DiT_B_1D
 
 
@@ -85,6 +88,7 @@ def per_subject_transform(meta, require_tables: bool):
     those cohorts require them. External datasets have no entries in the tables and fall back to
     the global channel conventions, so they only use the tables when present.
     """
+    representation = configured_representation()
     if require_tables:
         paper = str(require_local(PER_SUBJECT_PAPER, "per-subject polarity table"))
         addbio = str(require_local(PER_SUBJECT_ADDBIO, "pretraining-corpus polarity table"))
@@ -93,7 +97,8 @@ def per_subject_transform(meta, require_tables: bool):
         addbio = str(PER_SUBJECT_ADDBIO) if PER_SUBJECT_ADDBIO.is_file() else None
     return V4LazyTransformV3PerSubject(
         metadata=meta, global_zstats_path=str(ZSTATS_PATH),
-        per_subject_table_paper=paper, per_subject_table_addbio=addbio, ambiguous_policy="no_flip")
+        per_subject_table_paper=paper, per_subject_table_addbio=addbio, ambiguous_policy="no_flip",
+        bmclab_pelvis_representation=representation)
 
 
 SOURCE_TO_ID = {
@@ -257,6 +262,7 @@ def get_val_pairs(split: dict[str, Any], fold_name: str) -> list[tuple[str, str]
 
 
 def load_valid_mask_40(raw_path: Path, n_cycles: int) -> np.ndarray:
+    validate_bmclab_input(raw_path, configured_representation())
     mask_path = raw_path.with_name(raw_path.stem + "_mask.npy")
     if not mask_path.exists():
         # No validity mask on disk -> every cycle is treated as valid. This is a fallback,
@@ -275,6 +281,8 @@ def load_model(ckpt_path: Path, device: torch.device):
         ckpt = torch.load(str(ckpt_path), map_location="cpu", weights_only=False)
     except TypeError:
         ckpt = torch.load(str(ckpt_path), map_location="cpu")
+    verify_checkpoint_representation(
+        ckpt, configured_representation(), f"evaluation checkpoint {ckpt_path}")
     if isinstance(ckpt, dict) and ("model" in ckpt or "ema" in ckpt):
         zstats_warning = verify_checkpoint_zstats(
             ckpt,

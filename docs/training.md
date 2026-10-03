@@ -2,6 +2,12 @@
 
 Run from the repository root after building the arrays and tables described below. These are the commands that produced the released checkpoints, with their normalisation constants (`data/zstats/global_zstats.json`). The released checkpoints are the ones reported in the manuscript. Training uses `cudnn.benchmark`, mixed precision and seed 42, so a new run of the same commands gives a statistically equivalent model, not a bit-identical one. For a new training experiment, fit `data/zstats/global_zstats_stage1_only.json` on your Stage-1 training split (`data/prepare/fit_stage1_zstats.py`) and use that one file in both stages and at evaluation (`PATHOGAIT_ZSTATS`).
 
+BMClab arrays produced by the preparation pipeline use `opensim_angles_deg`. Select that
+pelvis representation for a new fine-tuning run and its evaluation. The representation is
+stored in the checkpoint and checked against the array metadata. Released checkpoints use
+`legacy_translations_m`; their reported performance does not describe a model retrained
+with angular BMClab pelvis inputs.
+
 Stage 1, pretraining on healthy gait:
 
 ```

@@ -42,6 +42,7 @@ from eval_common import (  # noqa: E402
     per_subject_transform,
 )
 from pathogait.data.subject_metadata import V4SubjectMetadata  # noqa: E402
+from pathogait.data.pelvis_contract import validate_bmclab_input  # noqa: E402
 from pathogait.diffusion.ddpm import DDPMScheduler  # noqa: E402
 
 CV5 = [f"cv5_{i}" for i in range(5)]
@@ -135,6 +136,7 @@ def gather_fold(model, sched, imt, transform, sev, fold, device):
         s = sev["mappings"].get(src, {}).get(stem)
         if s is None:
             continue
+        validate_bmclab_input(rp, transform.bmclab_pelvis_representation)
         try:
             raw = np.load(str(rp))
             v40 = load_valid_mask_40(rp, raw.shape[0])
@@ -383,6 +385,7 @@ def _score_headless_inline(model, sched, imt, transform, sev, fold, device, agg)
             s = sev["mappings"].get(src, {}).get(stem)
             if s is None:
                 continue
+            validate_bmclab_input(rp, transform.bmclab_pelvis_representation)
             try:
                 raw = np.load(str(rp))
                 v40 = load_valid_mask_40(rp, raw.shape[0])

@@ -1,7 +1,9 @@
 """Upload contract checks that run without checkpoint files."""
 from pathlib import Path
+from argparse import Namespace
 from types import SimpleNamespace
 import sys
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -14,9 +16,74 @@ import pathogait_api
 from pathogait_api import PathoGait, prepare_angles, physical, INPUT_CH, TARGET_CH, seed_values, MASKS
 from eval_common import build_known_mask
 from drop_channels import DROP_16CH
+from pathogait.data.pelvis_contract import ANGLES, LEGACY
 
 
 class InputContract(unittest.TestCase):
+    def test_checkpoint_constructor_records_pelvis_representation(self):
+        states = [({}, LEGACY), ({"args": {}}, LEGACY),
+                  ({"args": {"bmclab_pelvis_representation": ANGLES}}, ANGLES),
+                  ({"args": Namespace(bmclab_pelvis_representation=ANGLES)}, ANGLES)]
+        with tempfile.TemporaryDirectory() as directory:
+            checkpoint = Path(directory) / 'synthetic.pt'
+            checkpoint.write_bytes(b'synthetic')
+            for state, expected in states:
+                with self.subTest(state=state):
+                    with patch.object(pathogait_api, 'load_model',
+                                      return_value=(None, state, 'test', object())), \
+                            patch.object(pathogait_api, 'DDPMScheduler'):
+                        api = PathoGait(checkpoint)
+                    self.assertEqual(api.bmclab_pelvis_representation, expected)
+
+    def test_legacy_bmclab_rejects_observed_pelvis_before_sampling(self):
+        api = PathoGait.__new__(PathoGait)
+        api.model = SimpleNamespace(num_sources=12, num_cohorts=4, num_severities=6)
+        api.device, api.scheduler, api.token = torch.device('cpu'), None, None
+        # A single observed pelvis channel in one cycle must reject the batch.
+        x = np.zeros((2, 100, 16), np.float32)
+        x[:, :, 10:] = np.nan
+        x[1, :, 15] = 2.0
+        with patch.object(pathogait_api, 'tweedie_inpaint_drop') as sampler:
+            with self.assertRaisesRegex(ValueError, 'expects pelvis translations'):
+                api.predict(x, 'bmclab_pd')
+            sampler.assert_not_called()
+
+    def test_legacy_bmclab_accepts_each_way_to_omit_pelvis(self):
+        api = PathoGait.__new__(PathoGait)
+        api.model = SimpleNamespace(num_sources=12, num_cohorts=4, num_severities=6)
+        api.device, api.scheduler, api.token = torch.device('cpu'), None, None
+        api.bmclab_pelvis_representation = LEGACY
+        full = np.zeros((100, 16), np.float32)
+        missing = full.copy()
+        missing[:, 10:] = np.nan
+        observed = np.ones(16, dtype=bool)
+        observed[10:] = False
+        for name, x, kwargs in (('configuration', full, {'input_set': 'no_pelvis'}),
+                                ('NaN', missing, {}),
+                                ('mask', full, {'mask': observed})):
+            with self.subTest(method=name):
+                with patch.object(pathogait_api, 'tweedie_inpaint_drop',
+                                  side_effect=lambda *args: args[2].clone()) as sampler:
+                    _, result = api.predict(x, 'bmclab_pd', seeds=1, **kwargs)
+                sampler.assert_called_once()
+                self.assertFalse(sampler.call_args.args[3][:, 34:40].any())
+                self.assertEqual(result.shape, (1, 100, 8))
+
+    def test_angular_bmclab_and_other_cohorts_accept_pelvis_angles(self):
+        api = PathoGait.__new__(PathoGait)
+        api.model = SimpleNamespace(num_sources=12, num_cohorts=4, num_severities=6)
+        api.device, api.scheduler, api.token = torch.device('cpu'), None, None
+        x = np.zeros((100, 16), np.float32)
+        for cohort, representation in (('bmclab_pd', ANGLES), ('normal', LEGACY),
+                                       ('cp', LEGACY), ('vdk_stroke', LEGACY)):
+            with self.subTest(cohort=cohort):
+                api.bmclab_pelvis_representation = representation
+                with patch.object(pathogait_api, 'tweedie_inpaint_drop',
+                                  side_effect=lambda *args: args[2].clone()) as sampler:
+                    api.predict(x, cohort, seeds=1)
+                sampler.assert_called_once()
+                self.assertTrue(sampler.call_args.args[3][:, 34:40].all())
+
     def test_seven_configurations_match_manuscript_channel_masks(self):
         sys.path.insert(0, str(ROOT / 'scripts/eval'))
         from partial_input_masking import CONDITIONS

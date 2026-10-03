@@ -26,6 +26,7 @@ from drop_channels import DROP_16CH
 from guarded_write import guarded_savez
 from pathogait.diffusion.ddpm import DDPMScheduler
 from pathogait.data.subject_metadata import V4SubjectMetadata
+from pathogait.data.pelvis_contract import validate_bmclab_input
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--source", required=True, help="cohort: cp, normal, vdk_stroke or bmclab_pd")
@@ -63,7 +64,9 @@ print("weights:", weights, "| input mask token:", None if imt is None else tuple
 meta = V4SubjectMetadata()
 transform = per_subject_transform(meta, require_tables=True)
 
-raw = np.load(str(args.raw_root / SRC / ("%s.npy" % STEM)))
+raw_path = args.raw_root / SRC / ("%s.npy" % STEM)
+validate_bmclab_input(raw_path, transform.bmclab_pelvis_representation)
+raw = np.load(str(raw_path))
 mask = np.load(str(args.raw_root / SRC / ("%s_mask.npy" % STEM)))
 v40 = mask[:, KEEP_CHANNELS_54TO40].astype(bool)
 x40 = transform(raw, SRC, "cohort", STEM)[:, :100, :].astype(np.float32)
